@@ -1,13 +1,29 @@
-import math
-import os
 
-nome = input("nome do usuario: ").strip()
-peso = float(input("informe o peso: "))
-altura = float(input("informe o altura: "))
+try:        #  todo vez q coloca try tem q coloca except
 
-print(f"nome: {nome}")
-print(f"peso: {peso}")
-print(f"altura{altura}")
- 
-print(f"Area da circunferencia: {peso:.2f}")
-print(f"Tamanho da circunferencia: {altura:.2f}")
+    nome = input("nome do usuario: ").strip().title()
+    peso = float(input("informe o peso e, Kg: ").strip().replace(",","."))
+    altura = float(input("informe o altura em metros: ").strip().replace(",","."))
+
+    # calcular IMC
+    imc = peso/(altura**2)
+
+    # exibi o IMC do usuario
+    print(f"{nome}, seu {imc:.2f}")
+
+    # diagnostico do imc
+    if imc < 18.5:
+        print(f"{nome} esta abaixo do peso.")
+    elif imc < 25:
+        print(f"{nome} esta no peso ideal.")
+    elif imc < 30:
+        print(f"{nome} esta acima do peso.")
+    elif imc < 35:
+        print(f"{nome} esta obeso.")
+    elif imc < 40:
+        print(f"{nome} esta com obsesidade mórbida.")
+except Exception as e:       #pra mostra o tipo de erro
+    print(f"deu ruim!!! {e}")
+
+
+
