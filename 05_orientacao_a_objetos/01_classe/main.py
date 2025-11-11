@@ -7,6 +7,7 @@ class Pessoa:
         self.cpf = cpf
         self.email = email
         self.idade = idade
+        
 
     def exibir_dados(self):
         print(f"Nome: {self.nome}")
