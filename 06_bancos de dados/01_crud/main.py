@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker # orm banco de dados////
 
 from entidades import criar_tb_pessoa
-from modulo import limpar
+from modulo import limpar, cadastrar, listar, atualizar
 
 
 def main():
@@ -13,7 +13,31 @@ def main():
     session = Session() # cria uma sessao apara o banco de dados////
 
     limpar()
-    # TODO: fazer o CRUD
+    while True:
+        print(f"{'-'*20} crud da cobra {'-'*20}\n")
+        print("0 - sair do programa")
+        print("1 - cadastrar nova pessoa")
+        print("2 - listar pessoas cadastradas\n")
+        print("3 - atualizar dados")
+        opcao = input("opçao desejada: ").strip()
+        limpar()
+        match opcao:
+            case "0":
+                print("programa encerrado.")
+                break
+            case "1":
+                print(cadastrar(session, Pessoa))
+                continue
+            case "2":
+                listar(session, Pessoa)
+                continue
+            case "3":
+                print(atualizar(session, Pessoa))
+                continue
+            case _:
+                print("opçao invalida.")
+                continue
+    
 
     session.close()
 

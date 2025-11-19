@@ -11,7 +11,7 @@ def criar_tb_pessoa(engine, Base):
             # atributos
             id_pessoa = Column(Integer, primary_key=True, autoincrement=True)
             nome = Column(String, nullable=False)
-            nascimento = Column(Date, nullable=False)
+            data_nascimento = Column(Date, nullable=False)
             email = Column(String, nullable=False, unique=True)
             genero = Column(String, nullable=True)
         
