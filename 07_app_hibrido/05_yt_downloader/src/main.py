@@ -1,5 +1,5 @@
 import flet as ft
-from pytubefix import youtube
+from pytubefix import YouTube
 
 import os
 import threading
@@ -18,7 +18,7 @@ def main(page: ft.Page):
     os.makedirs(caminho_audios, exist_ok=True)
 
     # componetes da interfaxe grafica///////////////
-    titulo = ft.Text("Use uma URL", color=ft.colors.Black, size=20, weight=ft.FontWeight.BOLD)
+    titulo = ft.Text("Use uma URL", color=ft.Colors.BLACK, size=20, weight=ft.FontWeight.BOLD)
     url = ft.TextField(
         label="cole a url do video do YouTube aqui",
         width=400,
@@ -26,7 +26,7 @@ def main(page: ft.Page):
     )
     base_path = os.path.dirname(__file__)
     logo_path = os.path.join(base_path, "assets", "youtube.png")
-    logo_cabecalho = ft.image(src=logo_path, width=300, height=200)
+    logo_cabecalho = ft.Image(src=logo_path, width=300, height=200)
     
     #componete para mostra informacoes do video/////////////
     video_info = ft.Container(
@@ -90,17 +90,17 @@ def main(page: ft.Page):
                 # mostra progresso/////////////////////
                 progress_bar.visible = True
                 status_text.value = "Analisando video..."
-                status_text.color = ft.colors.BLUE
+                status_text.color = ft.Colors.BLUE
                 page.update()
 
                 # cria objeto do youtube//////////////////////
-                yt = youtube(url.value.strip())
+                yt = YouTube(url.value.strip())
 
                 # mostrar as informaçoes do video
                 mostrar_info_videos(yt)
 
                 # inciar download
-                status_text,value = f"Baixando video: {yt.title}..."
+                status_text.value = f"Baixando video: {yt.title}..."
                 page.update()
 
                 # pega a maior resoluçao possivel/////////////////
@@ -146,7 +146,7 @@ def main(page: ft.Page):
                 page.update()
 
                 # cria objeto youtuber
-                yt = youtube(url.value.strip())
+                yt = YouTube(url.value.strip())
 
                 # mostra informaçoes do video
                 mostrar_info_videos(yt)
@@ -157,7 +157,7 @@ def main(page: ft.Page):
 
                 stream = yt.streams.filter(only_audio=True).first()
                 if stream:
-                    audio_file = stream.dowmload(caminho_audios)
+                    audio_file = stream.download(caminho_audios)
 
                     # renomeia para mp3
                     base, extens = os.path.splitext(audio_file)
@@ -238,16 +238,23 @@ def main(page: ft.Page):
         vertical_alignment=ft.CrossAxisAlignment.CENTER
     )
                 
-    
+        
     page.add(
-        ft.SafeArea(
-            ft.Container(
-             
-                alignment=ft.alignment.center,
-            ),
-            expand=True,
-        )
-    )
+        ft.Column(
+           [
+           logo_cabecalho, linha_url,
+           ft.Divider(height=0, color=ft.Colors.TRANSPARENT),
+           video_info, botoes,
+           ft.Divider(height=10, color=ft.Colors.TRANSPARENT),
+           progress_bar, status_text
+           ],
+            spacing=15,
+            alignment=ft.CrossAxisAlignment.CENTER,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            scroll=ft.ScrollMode.AUTO
 
+       )
+
+    )
 
 ft.app(main)
