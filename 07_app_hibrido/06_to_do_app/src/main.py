@@ -1,52 +1,18 @@
 import flet as ft
 
-class TodoApp(ft.Column):
-    # application's root control is a Column containing all other controls
-    def __init__(self):
-        super().__init__()
-        self.new_task = ft.TextField(hint_text="What needs to be done?", expand=True)
-        self.tasks_view = ft.Column()
-        self.width = 600
-        self.controls = [
-            ft.Row(
-                controls=[
-                    self.new_task,
-                    ft.FloatingActionButton(
-                        icon=ft.Icons.ADD, on_click=self.add_clicked
-                    ),
-                ],
-            ),
-            self.tasks_view,
-        ]
 
-    def add_clicked(self, e):
-        self.tasks_view.controls.append(ft.Checkbox(label=self.new_task.value))
-        self.new_task.value = ""
-        self.update()
-
-
-def main(page: ft.Page):
-    page.title = "To-Do App"
-    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
-    page.update()
-
-    # create application instance
-    PYTHON = TodoApp()
-    JAVA = TodoApp()
-
-    # add application's root control to the page
-    page.add(PYTHON, JAVA)
-
-
-ft.app(main)
+# -----------------------------
+# Componente de Tarefa
+# -----------------------------
 class Task(ft.Column):
-    def __init__(self, task_name, task_delete):
+    def __init__(self, task_name, task_delete_callback):
         super().__init__()
-        self.task_name = task_name
-        self.task_delete = task_delete
-        self.display_task = ft.Checkbox(value=False, label=self.task_name)
+        self.task_delete_callback = task_delete_callback
+
+        self.display_task = ft.Checkbox(value=False, label=task_name)
         self.edit_name = ft.TextField(expand=1)
 
+        # Modo de exibição
         self.display_view = ft.Row(
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
@@ -57,12 +23,12 @@ class Task(ft.Column):
                     controls=[
                         ft.IconButton(
                             icon=ft.Icons.CREATE_OUTLINED,
-                            tooltip="Edit To-Do",
+                            tooltip="Editar tarefa",
                             on_click=self.edit_clicked,
                         ),
                         ft.IconButton(
                             ft.Icons.DELETE_OUTLINE,
-                            tooltip="Delete To-Do",
+                            tooltip="Excluir tarefa",
                             on_click=self.delete_clicked,
                         ),
                     ],
@@ -70,6 +36,7 @@ class Task(ft.Column):
             ],
         )
 
+        # Modo de edição
         self.edit_view = ft.Row(
             visible=False,
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
@@ -79,11 +46,12 @@ class Task(ft.Column):
                 ft.IconButton(
                     icon=ft.Icons.DONE_OUTLINE_OUTLINED,
                     icon_color=ft.Colors.GREEN,
-                    tooltip="Update To-Do",
+                    tooltip="Salvar",
                     on_click=self.save_clicked,
                 ),
             ],
         )
+
         self.controls = [self.display_view, self.edit_view]
 
     def edit_clicked(self, e):
@@ -99,4 +67,65 @@ class Task(ft.Column):
         self.update()
 
     def delete_clicked(self, e):
-        self.task_delete(self)
+        self.task_delete_callback(self)
+
+
+# -----------------------------
+# Aplicativo To-Do
+# -----------------------------
+class TodoApp(ft.Column):
+    def __init__(self, title="Lista"):
+        super().__init__()
+        self.title = title
+
+        self.new_task = ft.TextField(
+            hint_text=f"Adicionar tarefa em {self.title}...",
+            expand=True
+        )
+
+        self.tasks = ft.Column()
+
+        self.controls = [
+            ft.Text(self.title, size=20, weight=ft.FontWeight.BOLD),
+            ft.Row(
+                controls=[
+                    self.new_task,
+                    ft.FloatingActionButton(
+                        icon=ft.Icons.ADD,
+                        on_click=self.add_clicked
+                    ),
+                ]
+            ),
+            self.tasks
+        ]
+
+    def add_clicked(self, e):
+        if not self.new_task.value.strip():
+            return
+
+        task = Task(self.new_task.value, self.delete_task)
+        self.tasks.controls.append(task)
+        self.new_task.value = ""
+
+        self.update()
+
+    def delete_task(self, task):
+        self.tasks.controls.remove(task)
+        self.update()
+
+
+# -----------------------------
+# Main
+# -----------------------------
+def main(page: ft.Page):
+    page.title = "To-Do App"
+    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
+
+    Python_list = TodoApp("Python")
+    Java_list = TodoApp("Java")
+   
+
+    page.add(Python_list, Java_list)
+
+
+ft.app(main)
